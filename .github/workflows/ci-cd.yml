@@ -17,23 +17,41 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Display Project Files
+      - name: Display Repository Contents
         run: |
           echo "Repository Contents:"
           ls -R
 
-      - name: Validate HTML Exists
+      - name: Validate Application Files
         run: |
           if [ ! -f app/index.html ]; then
-            echo "index.html not found!"
+            echo "app/index.html not found!"
             exit 1
           fi
+
+          if [ ! -f package.json ]; then
+            echo "package.json not found!"
+            exit 1
+          fi
+
+          if [ ! -f server.js ]; then
+            echo "server.js not found!"
+            exit 1
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Dependencies
+        run: npm install
 
       - name: Upload Website Artifact
         uses: actions/upload-artifact@v4
         with:
           name: website
-          path: app/
+          path: .
 
   security_scan:
     name: Gitleaks Security Scan
